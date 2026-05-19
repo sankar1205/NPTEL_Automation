@@ -1,0 +1,11 @@
+{
+    "manifest_version" : 3,
+    "name" : "NPTEL AutoPlayer",
+    "description" : "Customize your nptel website",
+    "version" : "1.0",
+    "background" : {"service_worker" : "background.js"},
+    "content_scripts" : [
+    {"matches" : ["*://*.nptel.ac.in/*"],"js" : ["nptelController.js"]},
+    {"matches" : ["*://*.youtube.com/*"],"js" : ["youtubeController.js"],"all_frames":true}
+    ]
+}
