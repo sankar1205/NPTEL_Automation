@@ -15,37 +15,21 @@ function setPlaybackSpeed() {
         
         if (video) {
             clearInterval(interval);
-            video.playbackRate = 2.0;
             videoHandled = true;
             videoElem = video;
-            videoElem.volume = 0.1;
-            console.log("Extension volume:", videoElem.volume);
+            chrome.storage.local.get({playbackSpeed : 1.0},(result)=>{
+                const newSpeed = result.playbackSpeed;
+                videoElem.playbackRate = newSpeed;
+                console.log("Video playback speed set to: ",newSpeed);
+            })
+            chrome.storage.local.get({skipTime : 0},(result)=>{
+                const newSkip = result.skipTime;
+                videoElem.currentTime = newSkip;
+                console.log("Video skipped to: ",newSkip);
+            })
             // videoElem.muted = true;
             // videoElem.volume = 0.9;
             console.log("Video found and configured");
-            videoElem.currentTime = 5;
-            console.log("Intro skipped successfully");
-            
-            const playButton = document.querySelector('[aria-label="Play video"]');
-            try{
-                if (playButton){
-                    playButton.click();
-                    console.log("Paused:", videoElem.paused);
-                    const fullscreenButton = document.querySelector('[aria-label="Enter full screen"]');
-                    if (fullscreenButton){
-                        fullscreenButton.click();
-                        console.log("Fullscreen enabled");
-                    }
-                    console.log("Video started playing");
-                }
-                else{
-                    console.log("Play button not found");
-                }
-            }
-            catch(error){
-                console.log("Autoplay error: ",error);
-            }
-
             nextVideo(videoElem);
         } else{
             console.log("Video not found yet, waiting...");
