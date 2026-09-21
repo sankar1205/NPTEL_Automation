@@ -1,13 +1,11 @@
-let latestSkipTime = null;
+// background.js
 
-chrome.runtime.onMessage.addListener((msg,sender,sendResponse)=>{
-    if (msg.type==="SET_START_TIME"){
-        latestSkipTime = msg.value;
+chrome.runtime.onMessage.addListener((msg,sender)=>{
+    if (msg.type==="VIDEO_ENDED"){
+        chrome.tabs.sendMessage(
+            sender.tab.id,
+            {type: "VIDEO_ENDED"}
+        )
         console.log(sender);
     }
-    if (msg.type==="GET_START_TIME"){
-        sendResponse({value : latestSkipTime});
-        console.log(sender);
-    }
-    return true;
 })

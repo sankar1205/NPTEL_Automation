@@ -1,11 +1,18 @@
+// nptelController.js
+
 console.log("NPTEL Controller started!");
 console.log("Injected into:", location.href);
 
-console.log("Calculating start time...");
-const transcript = document.getElementById("video-transcript-div");
-const transcript_div = transcript.querySelector('div[data-start-time]');
-const startTime = transcript_div.dataset.startTime;
-chrome.runtime.sendMessage(
-    {type : "SET_START_TIME", value : startTime}
-)
-console.log("Start time sent successfully: ",startTime);
+chrome.runtime.onMessage.addListener((msg)=>{
+    if (msg.type=="VIDEO_ENDED"){
+        const nextButton = document.querySelector('[aria-label="Next lesson"]');
+        if (nextButton){
+            nextButton.click();
+        } else {
+            console.log("Button not found");
+        }
+        console.log("Moving to next video...");
+    }
+})
+
+

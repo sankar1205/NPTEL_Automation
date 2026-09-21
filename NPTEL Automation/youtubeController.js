@@ -1,3 +1,5 @@
+//youtubeController.js
+
 console.log("Youtube Controller started!");
 
 let videoHandled = false;
@@ -5,29 +7,46 @@ let tries = 0;
 const MAX_TRIES = 20;   
 let videoElem = null;
 
-
-
 function setPlaybackSpeed() {
         
     if (videoHandled) return;
     const interval = setInterval(()=>{
-        const video = document.querySelector("video");
-
+        let video = document.querySelector("video");
+        
         if (video) {
             clearInterval(interval);
             video.playbackRate = 2.0;
-            video.volume = 0.3;
             videoHandled = true;
             videoElem = video;
+            videoElem.volume = 0.1;
+            console.log("Extension volume:", videoElem.volume);
+            // videoElem.muted = true;
+            // videoElem.volume = 0.9;
             console.log("Video found and configured");
-
-            chrome.runtime.sendMessage({type: "GET_START_TIME"},(response)=>{
-                if (response?.value && videoElem){
-                    videoElem.currentTime = parseInt(response.value,10);
-                    console.log("Video skipped successfully");
+            videoElem.currentTime = 5;
+            console.log("Intro skipped successfully");
+            
+            const playButton = document.querySelector('[aria-label="Play video"]');
+            try{
+                if (playButton){
+                    playButton.click();
+                    console.log("Paused:", videoElem.paused);
+                    const fullscreenButton = document.querySelector('[aria-label="Enter full screen"]');
+                    if (fullscreenButton){
+                        fullscreenButton.click();
+                        console.log("Fullscreen enabled");
+                    }
+                    console.log("Video started playing");
                 }
-            })
+                else{
+                    console.log("Play button not found");
+                }
+            }
+            catch(error){
+                console.log("Autoplay error: ",error);
+            }
 
+            nextVideo(videoElem);
         } else{
             console.log("Video not found yet, waiting...");
         }
@@ -44,5 +63,12 @@ if (!videoHandled){
     setPlaybackSpeed();
 }
 
-console.log("Injected into:", location.href);
+function nextVideo(videoElem){
+    videoElem.addEventListener('ended',()=>{
+        chrome.runtime.sendMessage({
+            type:"VIDEO_ENDED",
+        });
+    })
+}
 
+console.log("Injected into:", location.href);
